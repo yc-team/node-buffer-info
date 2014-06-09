@@ -2,3 +2,182 @@ node-buffer-info
 ================
 
 js没有处理二进制数据类型，而在Node里面提供了全局的Buffer来处理二进制相关操作。
+
+#### 创建buffer实例
+
+```shell
+new Buffer(size)
+new Buffer(array)
+
+//encoding可选参数，默认是utf-8
+new Buffer(str, [encoding])
+```
+
+比如：创建 1KB 的buffer
+
+```shell
+var buf = new Buffer(1024);
+```
+
+这里面有一个8KB的说法：
+
+```shell
+Buffer.poolSize = 8 * 1024;
+var pool;
+function allocPool() {
+  pool = new SlowBuffer(Buffer.poolSize);
+  pool.used = 0;
+}
+```
+
+分配buffer池，默认大小是8KB，其实8KB就是一个存储的空间
+
+
+1. 如果创建的buffer大小 < 8KB, 则此buffer实例存入
+
+2. 如果创建的buffer大小 > 8KB, 则此buffer
+
+```shell
+function Buffer(subject, encoding, offset) {
+	//会和8KB比较
+	if (this.length > Buffer.poolSize) {
+
+		//如果大于8KB就再实例化SlowBuffer，赋值给this.parent就可以知道对应保存在哪个内存块
+		this.parent = new SlowBuffer(this.length);
+		//不需要公用内存，就至offset为0
+		this.offset = 0;
+
+	} else if (this.length > 0) {
+
+		if (!pool || pool.length - pool.used < this.length) allocPool();
+
+		this.parent = pool;
+		this.offset = pool.used;
+
+	} else {
+
+		//把0传给SlowBuffer
+		var zeroBuffer = new SlowBuffer(0);
+		this.parent = zeroBuffer;
+      	this.offset = 0;
+
+	}
+}
+```
+
+#### length的意义
+
+```shell
+var buf = new Buffer(1024);
+console.log(buf.length);  //1024
+buf.write('some string', 0, 'ascii');
+console.log(buf.length);  //1024
+```
+
+所以length是buffer对象的分配内侧的总大小，buffer对象的内容发生变化,length不变
+
+
+#### buffer和字符串如何转换
+
+1. 字符串转buffer
+
+```shell
+var buf = new Buffer('zhangyaochun');
+console.log(buf); // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+```
+
+2. buffer转成string
+
+```shell
+var buf = new Buffer([0x7a, 0x68, 0x61, 0x6e, 0x67, 0x79, 0x61, 0x6f, 0x63, 0x68, 0x75, 0x6e]);
+console.log(buf.toString()); // zhangyaochun
+```
+
+这里主要介绍一下buf.toString，它是用在：
+
+> 对buffer进行解码，返回一个字符串
+
+```shell
+//encoding 可选，默认是uft8
+//start 可选，默认是0
+//end 可选，默认是buffer.length
+buf.toString([encoding], [start], [end]);
+```
+
+
+#### 如何设置和获取对应index下标的buffer呢？
+
+```shell
+buf[index]
+```
+
+返回0-255 或者 0x00-0xFF
+
+看下面的代码示例：
+
+```shell
+var buf = new Buffer('zhangyaochun');
+console.log(buf.length); //12
+console.log(buf[0]);     //122 
+console.log(buf[1]);     //104
+console.log(buf[2]);     //97
+```
+
+
+#### slice
+
+```shell
+Buffer.prototype.slice = function(start, end) {
+	var len = this.length;
+
+	//... 对参数start和end进行处理
+
+	//原理还是new Buffer
+	return new Buffer(this.parent, end - start, start + this.offset());
+
+};
+```
+
+我们来看看示例代码：
+
+```shell
+var buf = new Buffer([0x7a, 0x68, 0x61, 0x6e, 0x67, 0x79, 0x61, 0x6f, 0x63, 0x68, 0x75, 0x6e]);
+console.log(buf);  // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+
+var sub = buf.slice(2);
+console.log(sub);  // <Buffer 61 6e 67 79 61 6f 63 68 75 6e>
+
+sub[0] = 0x65;
+console.log(sub);  // <Buffer 65 6e 67 79 61 6f 63 68 75 6e>
+console.log(buf);  // <Buffer 7a 68 65 6e 67 79 61 6f 63 68 75 6e>
+```
+
+> 我们看到居然buf改变了，slice会作用于原来的Buffer
+
+
+#### 什么时候用buffer
+
+当保持非utf-8字符串，或者2进制格式，能用字符串的还是用字符串。
+
+
+#### 判断参数是否是Buffer
+
+```shell
+Buffer.isBuffer(obj)
+```
+
+看下面的代码示例：
+
+```shell
+var buf = new Buffer('zhangyaochun');
+var str = 'zhangyaochun';
+Buffer.isBuffer(str); // false
+Buffer.isBuffer(buf); // true
+```
+
+
+
+
+
+
+
