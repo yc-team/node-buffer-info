@@ -264,7 +264,7 @@ Buffer.isBuffer(buf); // true
 
 #### 参考链接：
 
-* [node官网](http://nodejs.org/api/buffer.html#buffer_buffer)
+* [node官网关于buffer](http://nodejs.org/api/buffer.html#buffer_buffer)
 
 
 
