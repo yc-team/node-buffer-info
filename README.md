@@ -78,14 +78,14 @@ console.log(buf.length);  //1024
 
 #### buffer和字符串如何转换
 
-1. 字符串转buffer
+*. 字符串转buffer
 
 ```shell
 var buf = new Buffer('zhangyaochun');
 console.log(buf); // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
 ```
 
-2. buffer转成string
+*. buffer转成string
 
 ```shell
 var buf = new Buffer([0x7a, 0x68, 0x61, 0x6e, 0x67, 0x79, 0x61, 0x6f, 0x63, 0x68, 0x75, 0x6e]);
