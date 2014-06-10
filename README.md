@@ -192,6 +192,41 @@ console.log(buf);  // <Buffer 7a 68 65 6e 67 79 61 6f 63 68 75 6e>
 > 我们看到居然buf改变了，slice会作用于原来的Buffer
 
 
+
+#### buf.write
+
+把指定的string用指定的encoding，写入buffer
+
+```shell
+//offset 可选 默认 0
+//length 可选 buffer.length - offset
+//encoding 可选 默认 utf8
+buf.write(string, [offset], [length], [encoding])
+```
+
+实例：
+
+```shell
+var buf = new Buffer(1024);
+
+// <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+console.log(new Buffer('zhangyaochun')); 
+
+// <Buffer a9 7b 22 f4 e6 17 00 00 00 00 00 00 b6 01 00 00 11 7e 22 f4 e6 17 00 00 00 9e 00 01 01 00 00 00 00 00 00 00 00 00 00 00 e0 f9 03 01 01 00 00 00 04 00 00 ...>
+console.log(buf); 
+
+//write指定了offset,注意从0开始
+
+var len = buf.write('zhangyaochun', 2);
+console.log(len); //12
+
+// <Buffer a9 7b 7a 68 61 6e 67 79 61 6f 63 68 75 6e 00 00 11 7e 22 f4 e6 17 00 00 00 9e 00 01 01 00 00 00 00 00 00 00 00 00 00 00 e0 f9 03 01 01 00 00 00 04 00 00 ...>
+console.log(buf);
+```
+
+
+
+
 #### 什么时候用buffer
 
 当保持非utf-8字符串，或者2进制格式，能用字符串的还是用字符串。
