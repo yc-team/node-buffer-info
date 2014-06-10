@@ -19,6 +19,18 @@ new Buffer(str, [encoding])
 var buf = new Buffer(1024);
 ```
 
+如果参数类型是string：
+
+```shell
+if (type === 'string') {
+	//直接将subject调用write方法，offset设置为0
+	this.length = this.write(subject, 0, encoding);
+}
+```
+
+
+
+
 这里面有一个 *8KB* 的说法：
 
 ```shell
