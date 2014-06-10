@@ -33,9 +33,8 @@ function allocPool() {
 分配buffer池，默认大小是8KB，其实8KB就是一个存储的空间
 
 
-1. 如果创建的buffer大小 < 8KB, 则此buffer实例存入
-
-2. 如果创建的buffer大小 > 8KB, 则此buffer
+1. 如果创建的buffer大小 < 8KB && <= 当前剩余 8KB 里面能够分配的大小, 则此buffer实例存入，和其他buffer实例共享这个 8KB
+2. 如果创建的buffer大小 > 8KB, 则此buffer存储在一个重新实例化的SlowBuffer
 
 ```shell
 function Buffer(subject, encoding, offset) {
