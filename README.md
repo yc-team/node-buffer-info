@@ -19,7 +19,7 @@ new Buffer(str, [encoding])
 var buf = new Buffer(1024);
 ```
 
-这里面有一个8KB的说法：
+这里面有一个 *8KB* 的说法：
 
 ```shell
 Buffer.poolSize = 8 * 1024;
