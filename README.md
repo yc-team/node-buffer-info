@@ -105,6 +105,44 @@ buf.toString([encoding], [start], [end]);
 ```
 
 
+#### 如何转成json？
+
+```shell
+var buf = new Buffer('zhangyaochun');
+console.log(buf);  // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+console.log(buf.toJSON());  // [122,104,97,110,103,121,97,111,99,104,117,110]
+```
+
+可以看到，直接调用buf.toJSON() 返回JSON Array
+
+还记得：JSON.stringify吗？
+
+```shell
+var buf = new Buffer('zhangyaochun');
+console.log(buf);  // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+console.log(JSON.stringify(buf));  // [122,104,97,110,103,121,97,111,99,104,117,110]
+```
+
+会发现，这种返回的一样的.
+
+
+
+那有没有人会疑问，那咋再转回buf呢？
+
+```shell
+var buf = new Buffer('zhangyaochun');
+console.log(buf);  // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+var json = JSON.stringify(buf);  
+console.log(json); // [122,104,97,110,103,121,97,111,99,104,117,110]
+
+var copy = new Buffer(JSON.parse(json));
+console.log(copy); // <Buffer 7a 68 61 6e 67 79 61 6f 63 68 75 6e>
+```
+
+其实就是再实例化一个Buffer。
+
+
+
 #### 如何设置和获取对应index下标的buffer呢？
 
 ```shell
